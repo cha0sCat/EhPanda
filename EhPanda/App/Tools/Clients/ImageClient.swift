@@ -73,10 +73,12 @@ extension ImageClient {
 
     func fetchImage(url: URL) async -> Result<UIImage, Error> {
         let cachedImage = await retrieveImage(url.absoluteString)
-        if case .success = cachedImage {
+        switch cachedImage {
+        case .success:
             return cachedImage
+        case .failure:
+            return await downloadImage(url)
         }
-        return await downloadImage(url)
     }
 }
 

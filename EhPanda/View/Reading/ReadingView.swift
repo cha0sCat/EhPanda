@@ -517,7 +517,7 @@ private struct ImageContainer: View {
         ))
         .frame(width: width, height: height)
     }
-    private func placeholder() -> some View {
+    private func defaultPlaceholder() -> some View {
         placeholder(.init())
     }
     @ViewBuilder private func image(url: URL?) -> some View {
@@ -525,12 +525,12 @@ private struct ImageContainer: View {
             WebImage(url: url) { image in
                 image.defaultModifier(withRoundedCorners: false)
             } placeholder: {
-                placeholder()
+                defaultPlaceholder()
             }
             .transition(.fade(duration: 0.25))
             .onSuccess(onSuccess).onFailure(onFailure)
         } else {
-            AnimatedImage(url: url, placeholder: { placeholder() })
+            AnimatedImage(url: url, placeholder: { defaultPlaceholder() })
                 .resizable()
                 .transition(.fade(duration: 0.25))
                 .onSuccess(onSuccess).onFailure(onFailure)

@@ -765,7 +765,7 @@ private struct PreviewsSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(previewURLs.tuples.sorted(by: { $0.0 < $1.0 }), id: \.0) { index, previewURL in
-                        let (url, _) = PreviewResolver.getPreviewConfigs(originalURL: previewURL)
+                        let url = PreviewResolver.getPreviewConfigs(originalURL: previewURL)
                         Button {
                             navigateReadingAction(index)
                         } label: {

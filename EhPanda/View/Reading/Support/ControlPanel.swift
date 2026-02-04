@@ -336,7 +336,7 @@ private struct SliderPreivew: View {
     var body: some View {
         HStack(spacing: previewSpacing) {
             ForEach(previewsIndices, id: \.self) { index in
-                let (url, _) = PreviewResolver.getPreviewConfigs(originalURL: previewURLs[index])
+                let url = PreviewResolver.getPreviewConfigs(originalURL: previewURLs[index])
                 VStack {
                     WebImage(url: url, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
                         width: previewWidth,

@@ -38,7 +38,7 @@ struct PreviewsView: View {
             LazyVGrid(columns: gridItems) {
                 ForEach(1..<store.gallery.pageCount + 1, id: \.self) { index in
                     VStack {
-                        let (url, _) = PreviewResolver.getPreviewConfigs(
+                        let url = PreviewResolver.getPreviewConfigs(
                             originalURL: store.previewURLs[index]
                         )
                         Button {

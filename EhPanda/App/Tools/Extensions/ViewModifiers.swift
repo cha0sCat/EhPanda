@@ -101,12 +101,12 @@ struct RoundedCorner: Shape {
 }
 
 struct PreviewResolver {
-    static func getPreviewConfigs(originalURL: URL?) -> (URL?, CGRect?) {
+    static func getPreviewConfigs(originalURL: URL?) -> URL? {
         guard let url = originalURL,
-              let (plainURL, size, offset) = Parser.parsePreviewConfigs(url: url)
+              let (plainURL, _, _) = Parser.parsePreviewConfigs(url: url)
         else {
-            return (originalURL, nil)
+            return originalURL
         }
-        return (plainURL, CGRect(origin: offset, size: size))
+        return plainURL
     }
 }
