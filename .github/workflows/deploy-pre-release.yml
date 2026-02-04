@@ -86,13 +86,9 @@ jobs:
           [[ ! -z "${{ steps.retrieve-data.outputs.size }}" ]] || exit 1
           [[ ! -z "${{ steps.bump-version.outputs.version }}" ]] || exit 1
           [[ ! -z "${{ steps.retrieve-data.outputs.version_date }}" ]] || exit 1
-      - name: Release to GitHub
-        uses: softprops/action-gh-release@v2
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
         with:
-         prerelease: true
-         fail_on_unmatched_files: true
-         files: ${{ env.IPA_OUTPUT_PATH }}
-         token: ${{ secrets.GITHUB_TOKEN }}
-         name: ${{ inputs.releaseTitle }}
-         body: ${{ inputs.releaseDescription }}
-         tag_name: 'v${{ steps.bump-version.outputs.version }}'
+          name: EhPanda-v${{ steps.bump-version.outputs.version }}
+          path: ${{ env.IPA_OUTPUT_PATH }}
+          retention-days: 90
