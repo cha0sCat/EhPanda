@@ -135,6 +135,7 @@ private struct UpperPanel: View {
                     .padding(.vertical, 8)
                     .glassEffect(.regular.interactive())
             }
+            .contentShape(Rectangle())
 
             Spacer()
 
@@ -208,6 +209,7 @@ private struct UpperPanel: View {
                 .buttonStyle(.borderless)
                 .font(.title2)
             }
+            .contentShape(Rectangle())
             .padding(.vertical, 12)
             .padding(.horizontal, 20)
             .glassEffect(.regular.interactive())

@@ -122,7 +122,7 @@ struct ReadingView: View {
                 dragGesture.simultaneously(with: tapGesture),
                 isEnabled: gestureHandler.scale > 1
             )
-            .gesture(tapGesture, isEnabled: gestureHandler.scale == 1 && !store.showsPanel)
+            .gesture(tapGesture, isEnabled: gestureHandler.scale == 1)
             .gesture(magnificationGesture)
             .ignoresSafeArea()
             .id(store.databaseLoadingState)
