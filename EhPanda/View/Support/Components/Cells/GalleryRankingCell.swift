@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 struct GalleryRankingCell: View {
     private let gallery: Gallery
@@ -17,10 +17,17 @@ struct GalleryRankingCell: View {
 
     var body: some View {
         HStack {
-            KFImage(gallery.coverURL)
-                .placeholder { Placeholder(style: .activity(ratio: Defaults.ImageSize.headerAspect)) }.defaultModifier()
-                .scaledToFill().frame(width: Defaults.ImageSize.rowW * 0.75, height: Defaults.ImageSize.rowH * 0.75)
-                .cornerRadius(2)
+            WebImage(url: gallery.coverURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                width: Defaults.ImageSize.rowW * 0.75,
+                height: Defaults.ImageSize.rowH * 0.75
+            ))]) { image in
+                image.defaultModifier().scaledToFill()
+            } placeholder: {
+                Placeholder(style: .activity(ratio: Defaults.ImageSize.headerAspect))
+            }
+            .transition(.fade(duration: 0.25))
+            .frame(width: Defaults.ImageSize.rowW * 0.75, height: Defaults.ImageSize.rowH * 0.75)
+            .cornerRadius(2)
             Text(String(ranking)).fontWeight(.medium).font(.title2).padding(.horizontal)
             VStack(alignment: .leading) {
                 Text(gallery.trimmedTitle).bold().lineLimit(2).fixedSize(horizontal: false, vertical: true)

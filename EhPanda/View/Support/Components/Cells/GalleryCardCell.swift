@@ -5,7 +5,7 @@
 
 import SwiftUI
 import Colorful
-import Kingfisher
+import SDWebImageSwiftUI
 import UIImageColors
 
 struct GalleryCardCell: View {
@@ -13,7 +13,7 @@ struct GalleryCardCell: View {
 
     private let currentID: String
     private let colors: [Color]
-    private let webImageSuccessAction: (RetrieveImageResult) -> Void
+    private let webImageSuccessAction: (UIImage) -> Void
 
     private let gallery: Gallery
 
@@ -22,7 +22,7 @@ struct GalleryCardCell: View {
 
     init(
         gallery: Gallery, currentID: String, colors: [Color],
-        webImageSuccessAction: @escaping (RetrieveImageResult) -> Void
+        webImageSuccessAction: @escaping (UIImage) -> Void
     ) {
         self.gallery = gallery
         self.currentID = currentID
@@ -48,11 +48,20 @@ struct GalleryCardCell: View {
             ColorfulView(animated: animated, animation: animation, colors: colors)
                 .id(currentID + animated.description)
             HStack {
-                KFImage(gallery.coverURL)
-                    .placeholder { Placeholder(style: .activity(ratio: Defaults.ImageSize.headerAspect)) }
-                    .onSuccess(webImageSuccessAction).defaultModifier().scaledToFill()
-                    .frame(width: Defaults.ImageSize.headerW, height: Defaults.ImageSize.headerH)
-                    .cornerRadius(5)
+                WebImage(url: gallery.coverURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                    width: Defaults.ImageSize.headerW,
+                    height: Defaults.ImageSize.headerH
+                ))]) { image in
+                    image.defaultModifier().scaledToFill()
+                } placeholder: {
+                    Placeholder(style: .activity(ratio: Defaults.ImageSize.headerAspect))
+                }
+                .transition(.fade(duration: 0.25))
+                .onSuccess { image, _, _ in
+                    webImageSuccessAction(image)
+                }
+                .frame(width: Defaults.ImageSize.headerW, height: Defaults.ImageSize.headerH)
+                .cornerRadius(5)
                 VStack(alignment: .leading) {
                     Text(title).font(.title3.bold()).lineLimit(4)
                     Spacer()

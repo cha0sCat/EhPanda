@@ -3,7 +3,6 @@
 //  EhPanda
 //
 
-import Kingfisher
 import LocalAuthentication
 import ComposableArchitecture
 

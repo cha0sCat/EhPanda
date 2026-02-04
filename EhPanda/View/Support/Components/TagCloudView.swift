@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 struct TagCloudView<Element, ID, TagCell>: View
 where TagCell: View, Element: Equatable & Identifiable, ID == Element.ID {
@@ -108,7 +108,16 @@ struct TagCloudCell: View {
             Text(showsImages ? text : text.emojisRipped)
             if let imageURL = imageURL, showsImages {
                 Image(systemSymbol: .photo).opacity(0)
-                    .overlay(KFImage(imageURL).resizable().scaledToFit())
+                    .overlay(
+                        WebImage(url: imageURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                            width: 24,
+                            height: 24
+                        ))]) { image in
+                            image.resizable().scaledToFit()
+                        } placeholder: {
+                            EmptyView()
+                        }
+                    )
             }
         }
         .font(font.bold()).lineLimit(1).foregroundColor(textColor)

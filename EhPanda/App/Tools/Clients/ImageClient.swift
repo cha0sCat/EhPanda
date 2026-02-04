@@ -6,7 +6,8 @@
 import Photos
 import SwiftUI
 import Combine
-import Kingfisher
+import SDWebImage
+import UniformTypeIdentifiers
 import ComposableArchitecture
 
 struct ImageClient {
@@ -19,11 +20,11 @@ struct ImageClient {
 extension ImageClient {
     static let live: Self = .init(
         prefetchImages: { urls in
-            ImagePrefetcher(urls: urls).start()
+            SDWebImagePrefetcher.shared.prefetchURLs(urls)
         },
         saveImageToPhotoLibrary: { (image, isAnimated) in
             await withCheckedContinuation { continuation in
-                if let data = image.kf.data(format: isAnimated ? .GIF : .unknown) {
+                if isAnimated, let data = image.sd_imageData() {
                     PHPhotoLibrary.shared().performChanges {
                         let request = PHAssetCreationRequest.forAsset()
                         request.addResource(with: .photo, data: data, options: nil)
@@ -31,34 +32,39 @@ extension ImageClient {
                         continuation.resume(returning: isSuccess)
                     }
                 } else {
-                    continuation.resume(returning: false)
+                    PHPhotoLibrary.shared().performChanges {
+                        let request = PHAssetCreationRequest.forAsset()
+                        let options = PHAssetResourceCreationOptions()
+                        options.uniformTypeIdentifier = UTType.png.identifier
+                        if let data = image.pngData() {
+                            request.addResource(with: .photo, data: data, options: options)
+                        }
+                    } completionHandler: { (isSuccess, _) in
+                        continuation.resume(returning: isSuccess)
+                    }
                 }
             }
         },
         downloadImage: { url in
             await withCheckedContinuation { continuation in
-                KingfisherManager.shared.downloader.downloadImage(with: url, options: nil) { result in
-                    switch result {
-                    case .success(let result):
-                        continuation.resume(returning: .success(result.image))
-                    case .failure(let error):
+                SDWebImageDownloader.shared.downloadImage(with: url) { image, _, error, _ in
+                    if let image = image {
+                        continuation.resume(returning: .success(image))
+                    } else if let error = error {
                         continuation.resume(returning: .failure(error))
+                    } else {
+                        continuation.resume(returning: .failure(AppError.notFound))
                     }
                 }
             }
         },
         retrieveImage: { key in
             await withCheckedContinuation { continuation in
-                KingfisherManager.shared.cache.retrieveImage(forKey: key) { result in
-                    switch result {
-                    case .success(let result):
-                        if let image = result.image {
-                            continuation.resume(returning: .success(image))
-                        } else {
-                            continuation.resume(returning: .failure(AppError.notFound))
-                        }
-                    case .failure(let error):
-                        continuation.resume(returning: .failure(error))
+                SDImageCache.shared.queryImage(forKey: key, options: [], context: nil) { image, _, _, _ in
+                    if let image = image {
+                        continuation.resume(returning: .success(image))
+                    } else {
+                        continuation.resume(returning: .failure(AppError.notFound))
                     }
                 }
             }
@@ -66,11 +72,11 @@ extension ImageClient {
     )
 
     func fetchImage(url: URL) async -> Result<UIImage, Error> {
-        if KingfisherManager.shared.cache.isCached(forKey: url.absoluteString) {
-            return await retrieveImage(url.absoluteString)
-        } else {
-            return await downloadImage(url)
+        let cachedImage = await retrieveImage(url.absoluteString)
+        if case .success = cachedImage {
+            return cachedImage
         }
+        return await downloadImage(url)
     }
 }
 

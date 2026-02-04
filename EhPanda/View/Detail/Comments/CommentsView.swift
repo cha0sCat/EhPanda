@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 import ComposableArchitecture
 
 struct CommentsView: View {
@@ -241,9 +241,13 @@ private struct CommentCell: View {
     @ViewBuilder func imageContainer(
         url: URL, widthFactor: Double, action: (() -> Void)? = nil
     ) -> some View {
-        let image = KFImage(url)
-            .commentDefaultModifier().scaledToFit()
-            .frame(width: DeviceUtil.windowW / widthFactor)
+        let image = WebImage(url: url) { image in
+            image.defaultModifier().scaledToFit()
+        } placeholder: {
+            Placeholder(style: .activity(ratio: 1))
+        }
+        .transition(.fade(duration: 0.25))
+        .frame(width: DeviceUtil.windowW / widthFactor)
         if let action = action {
             Button(action: action) {
                 image
@@ -252,15 +256,6 @@ private struct CommentCell: View {
         } else {
             image
         }
-    }
-}
-
-private extension KFImage {
-    func commentDefaultModifier() -> KFImage {
-        defaultModifier()
-            .placeholder {
-                Placeholder(style: .activity(ratio: 1))
-            }
     }
 }
 

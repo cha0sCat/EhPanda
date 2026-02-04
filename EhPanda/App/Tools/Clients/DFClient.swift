@@ -4,7 +4,7 @@
 //
 
 import Foundation
-import Kingfisher
+import SDWebImage
 import ComposableArchitecture
 
 struct DFClient {
@@ -19,10 +19,11 @@ extension DFClient {
             } else {
                 URLProtocol.unregisterClass(DFURLProtocol.self)
             }
-            // Kingfisher
-            let config = KingfisherManager.shared.downloader.sessionConfiguration
+            // SDWebImage
+            let downloader = SDWebImageDownloader.shared
+            let config = downloader.sessionConfiguration
             config.protocolClasses = newValue ? [DFURLProtocol.self] : nil
-            KingfisherManager.shared.downloader.sessionConfiguration = config
+            downloader.sessionConfiguration = config
         }
     )
 }

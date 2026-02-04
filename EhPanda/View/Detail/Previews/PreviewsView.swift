@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 import ComposableArchitecture
 
 struct PreviewsView: View {
@@ -38,19 +38,22 @@ struct PreviewsView: View {
             LazyVGrid(columns: gridItems) {
                 ForEach(1..<store.gallery.pageCount + 1, id: \.self) { index in
                     VStack {
-                        let (url, modifier) = PreviewResolver.getPreviewConfigs(
+                        let (url, _) = PreviewResolver.getPreviewConfigs(
                             originalURL: store.previewURLs[index]
                         )
                         Button {
                             store.send(.updateReadingProgress(index))
                             store.send(.setNavigation(.reading()))
                         } label: {
-                            KFImage.url(url, cacheKey: store.previewURLs[index]?.absoluteString)
-                                .placeholder({ Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect)) })
-                                .imageModifier(modifier)
-                                .fade(duration: 0.25)
-                                .resizable()
-                                .scaledToFit()
+                            WebImage(url: url, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                                width: Defaults.ImageSize.previewAvgW,
+                                height: Defaults.ImageSize.previewAvgW / Defaults.ImageSize.previewAspect
+                            ))]) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect))
+                            }
+                            .transition(.fade(duration: 0.25))
                         }
                         Text("\(index)")
                             .font(DeviceUtil.isPadWidth ? .callout : .caption)

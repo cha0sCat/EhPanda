@@ -4,7 +4,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import UIImageColors
 import ComposableArchitecture
 
@@ -71,7 +70,7 @@ struct HomeReducer {
         case setNavigation(Route?)
         case clearSubStates
         case setAllowsCardHitTesting(Bool)
-        case analyzeImageColors(String, RetrieveImageResult)
+        case analyzeImageColors(String, UIImage)
         case analyzeImageColorsDone(String, UIImageColors?)
 
         case fetchAllGalleries
@@ -225,10 +224,10 @@ struct HomeReducer {
                 }
                 return .none
 
-            case .analyzeImageColors(let gid, let result):
+            case .analyzeImageColors(let gid, let image):
                 guard !state.rawCardColors.keys.contains(gid) else { return .none }
                 return .run { send in
-                    let colors = await libraryClient.analyzeImageColors(result.image)
+                    let colors = await libraryClient.analyzeImageColors(image)
                     await send(.analyzeImageColorsDone(gid, colors))
                 }
 

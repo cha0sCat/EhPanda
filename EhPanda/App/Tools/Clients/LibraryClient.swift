@@ -6,7 +6,8 @@
 import SwiftUI
 import Combine
 import Foundation
-import Kingfisher
+import SDWebImage
+import SDWebImageWebPCoder
 import SwiftyBeaver
 import UIImageColors
 import ComposableArchitecture
@@ -51,12 +52,14 @@ extension LibraryClient {
             #endif
         },
         initializeWebImage: {
-            let config = KingfisherManager.shared.downloader.sessionConfiguration
+            SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
+            let downloader = SDWebImageDownloader.shared
+            let config = downloader.sessionConfiguration
             config.httpCookieStorage = HTTPCookieStorage.shared
-            KingfisherManager.shared.downloader.sessionConfiguration = config
+            downloader.sessionConfiguration = config
         },
         clearWebImageDiskCache: {
-            KingfisherManager.shared.cache.clearDiskCache()
+            SDImageCache.shared.clearDiskCache()
         },
         analyzeImageColors: { image in
             await withCheckedContinuation { continuation in
@@ -67,9 +70,9 @@ extension LibraryClient {
         },
         calculateWebImageDiskCacheSize: {
             await withCheckedContinuation { continuation in
-                KingfisherManager.shared.cache.calculateDiskStorageSize {
-                    continuation.resume(returning: try? $0.get())
-                }
+                SDImageCache.shared.calculateSize(completion: { size in
+                    continuation.resume(returning: size)
+                })
             }
         }
     )

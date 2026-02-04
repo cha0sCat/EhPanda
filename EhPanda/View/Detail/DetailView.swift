@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 import ComposableArchitecture
 import CommonMark
 
@@ -324,14 +324,19 @@ private struct HeaderSection: View {
 
     var body: some View {
         HStack {
-            KFImage(gallery.coverURL)
-                .placeholder({ Placeholder(style: .activity(ratio: Defaults.ImageSize.headerAspect)) })
-                .defaultModifier()
-                .scaledToFit()
-                .frame(
-                    width: Defaults.ImageSize.headerW,
-                    height: Defaults.ImageSize.headerH
-                )
+            WebImage(url: gallery.coverURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                width: Defaults.ImageSize.headerW,
+                height: Defaults.ImageSize.headerH
+            ))]) { image in
+                image.defaultModifier().scaledToFit()
+            } placeholder: {
+                Placeholder(style: .activity(ratio: Defaults.ImageSize.headerAspect))
+            }
+            .transition(.fade(duration: 0.25))
+            .frame(
+                width: Defaults.ImageSize.headerW,
+                height: Defaults.ImageSize.headerH
+            )
 
             VStack(alignment: .leading) {
                 Button(action: showFullTitleAction) {
@@ -760,14 +765,20 @@ private struct PreviewsSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     ForEach(previewURLs.tuples.sorted(by: { $0.0 < $1.0 }), id: \.0) { index, previewURL in
-                        let (url, modifier) = PreviewResolver.getPreviewConfigs(originalURL: previewURL)
+                        let (url, _) = PreviewResolver.getPreviewConfigs(originalURL: previewURL)
                         Button {
                             navigateReadingAction(index)
                         } label: {
-                            KFImage.url(url, cacheKey: previewURL.absoluteString)
-                                .placeholder { Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect)) }
-                                .imageModifier(modifier).fade(duration: 0.25).resizable().scaledToFit()
-                                .frame(width: width, height: height)
+                            WebImage(url: url, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                                width: Defaults.ImageSize.previewAvgW,
+                                height: Defaults.ImageSize.previewAvgW / Defaults.ImageSize.previewAspect
+                            ))]) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect))
+                            }
+                            .transition(.fade(duration: 0.25))
+                            .frame(width: width, height: height)
                         }
                     }
                     .withHorizontalSpacing(height: height)

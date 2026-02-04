@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import SDWebImage
 import ComposableArchitecture
 import UniformTypeIdentifiers
 
@@ -32,7 +33,7 @@ extension ClipboardClient {
         saveImage: { (image, isAnimated) in
             if isAnimated {
                 DispatchQueue.global(qos: .utility).async {
-                    if let data = image.kf.data(format: .GIF) {
+                    if let data = image.sd_imageData() {
                         UIPasteboard.general.setData(data, forPasteboardType: UTType.gif.identifier)
                     }
                 }

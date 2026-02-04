@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 struct TagSuggestionView: View {
     @Binding private var keyword: String
@@ -74,9 +74,14 @@ private struct SuggestionCell: View {
                             Image(systemSymbol: .photo)
                                 .opacity(0)
                                 .overlay(
-                                    KFImage(imageURL)
-                                        .resizable()
-                                        .scaledToFit()
+                                    WebImage(url: imageURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                                        width: 24,
+                                        height: 24
+                                    ))]) { image in
+                                        image.resizable().scaledToFit()
+                                    } placeholder: {
+                                        EmptyView()
+                                    }
                                 )
                         }
                     }

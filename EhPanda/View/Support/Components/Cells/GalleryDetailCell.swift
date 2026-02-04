@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 struct GalleryDetailCell: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -25,9 +25,16 @@ struct GalleryDetailCell: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            KFImage(gallery.coverURL)
-                .placeholder { Placeholder(style: .activity(ratio: Defaults.ImageSize.rowAspect)) }
-                .defaultModifier().scaledToFit().frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH)
+            WebImage(url: gallery.coverURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                width: Defaults.ImageSize.rowW,
+                height: Defaults.ImageSize.rowH
+            ))]) { image in
+                image.defaultModifier().scaledToFit()
+            } placeholder: {
+                Placeholder(style: .activity(ratio: Defaults.ImageSize.rowAspect))
+            }
+            .transition(.fade(duration: 0.25))
+            .frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH)
             VStack(alignment: .leading, spacing: 5) {
                 Text(gallery.title).lineLimit(3).font(.headline).foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)

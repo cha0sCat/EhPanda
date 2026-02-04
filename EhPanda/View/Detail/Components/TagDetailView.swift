@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 struct TagDetailView: View {
     private let detail: TagDetail
@@ -64,14 +64,15 @@ private struct ImagesSection: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack {
                             ForEach(imageURLs, id: \.self) { imageURL in
-                                KFImage(imageURL)
-                                    .placeholder {
-                                        Placeholder(style: .activity(
-                                            ratio: Defaults.ImageSize.previewAspect
-                                        ))
-                                    }
-                                    .defaultModifier().scaledToFit()
-                                    .frame(width: width, height: height)
+                                WebImage(url: imageURL) { image in
+                                    image.defaultModifier().scaledToFit()
+                                } placeholder: {
+                                    Placeholder(style: .activity(
+                                        ratio: Defaults.ImageSize.previewAspect
+                                    ))
+                                }
+                                .transition(.fade(duration: 0.25))
+                                .frame(width: width, height: height)
                             }
                             .withHorizontalSpacing(height: height)
                         }

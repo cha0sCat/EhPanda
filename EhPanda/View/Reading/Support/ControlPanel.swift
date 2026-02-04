@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 // MARK: ControlPanel
 struct ControlPanel<G: Gesture>: View {
@@ -336,15 +336,18 @@ private struct SliderPreivew: View {
     var body: some View {
         HStack(spacing: previewSpacing) {
             ForEach(previewsIndices, id: \.self) { index in
-                let (url, modifier) = PreviewResolver.getPreviewConfigs(originalURL: previewURLs[index])
+                let (url, _) = PreviewResolver.getPreviewConfigs(originalURL: previewURLs[index])
                 VStack {
-                    KFImage.url(url, cacheKey: previewURLs[index]?.absoluteString)
-                        .placeholder({ Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect)) })
-                        .fade(duration: 0.25)
-                        .imageModifier(modifier)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: previewWidth, height: showsSliderPreview ? previewHeight : 0)
+                    WebImage(url: url, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                        width: previewWidth,
+                        height: previewWidth / Defaults.ImageSize.previewAspect
+                    ))]) { image in
+                        image.resizable().scaledToFit()
+                    } placeholder: {
+                        Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect))
+                    }
+                    .transition(.fade(duration: 0.25))
+                    .frame(width: previewWidth, height: showsSliderPreview ? previewHeight : 0)
 
                     Text("\(index)")
                         .font(DeviceUtil.isPadWidth ? .callout : .caption)

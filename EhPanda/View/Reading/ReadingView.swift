@@ -4,7 +4,8 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImage
+import SDWebImageSwiftUI
 import SwiftUIPager
 import ComposableArchitecture
 
@@ -261,26 +262,14 @@ extension ReadingView {
             Logger.info("analyzeImageForLiveText URL not found", context: ["index": index])
             return
         }
-        KingfisherManager.shared.cache.retrieveImage(forKey: key) { result in
-            switch result {
-            case .success(let result):
-                if let image = result.image, let cgImage = image.cgImage {
-                    liveTextHandler.analyzeImage(
-                        cgImage, size: image.size, index: index, recognitionLanguages:
-                            store.galleryDetail?.language.codes
-                    )
-                } else {
-                    Logger.info("analyzeImageForLiveText image not found", context: ["index": index])
-                }
-            case .failure(let error):
-                Logger.info(
-                    "analyzeImageForLiveText failed",
-                    context: [
-                        "index": index,
-                        "error": error
-                    ]
-                    as [String: Any]
+        SDImageCache.shared.queryImage(forKey: key, options: [], context: nil) { image, _, _, _ in
+            if let image = image, let cgImage = image.cgImage {
+                liveTextHandler.analyzeImage(
+                    cgImage, size: image.size, index: index, recognitionLanguages:
+                        store.galleryDetail?.language.codes
                 )
+            } else {
+                Logger.info("analyzeImageForLiveText image not found", context: ["index": index])
             }
         }
     }
@@ -528,15 +517,22 @@ private struct ImageContainer: View {
         ))
         .frame(width: width, height: height)
     }
+    private func placeholder() -> some View {
+        placeholder(.init())
+    }
     @ViewBuilder private func image(url: URL?) -> some View {
         if url?.isAnimatedImage != true {
-            KFImage(url)
-                .placeholder(placeholder)
-                .defaultModifier(withRoundedCorners: false)
-                .onSuccess(onSuccess).onFailure(onFailure)
+            WebImage(url: url) { image in
+                image.defaultModifier(withRoundedCorners: false)
+            } placeholder: {
+                placeholder()
+            }
+            .transition(.fade(duration: 0.25))
+            .onSuccess(onSuccess).onFailure(onFailure)
         } else {
-            KFAnimatedImage(url)
-                .placeholder(placeholder).fade(duration: 0.25)
+            AnimatedImage(url: url, placeholder: { placeholder() })
+                .resizable()
+                .transition(.fade(duration: 0.25))
                 .onSuccess(onSuccess).onFailure(onFailure)
         }
     }
@@ -579,10 +575,10 @@ private struct ImageContainer: View {
             }
         }
     }
-    private func onSuccess(_: RetrieveImageResult) {
+    private func onSuccess(_: UIImage, _: Data?, _: SDImageCacheType) {
         loadSucceededAction(index)
     }
-    private func onFailure(_: KingfisherError) {
+    private func onFailure(_: Error) {
         if imageURL != nil {
             loadFailedAction(index)
         }

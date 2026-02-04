@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 
 struct GalleryThumbnailCell: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -28,16 +28,20 @@ struct GalleryThumbnailCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            KFImage(gallery.coverURL)
-                .placeholder { Placeholder(style: .activity(ratio: Defaults.ImageSize.rowAspect)) }
-                .imageModifier(WebtoonModifier(
-                    minAspect: Defaults.ImageSize.webtoonMinAspect,
-                    idealAspect: Defaults.ImageSize.webtoonIdealAspect
-                ))
-                .fade(duration: 0.25).resizable().scaledToFit().overlay {
-                    VStack {
-                        HStack {
-                            Spacer()
+            WebImage(url: gallery.coverURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                width: Defaults.ImageSize.rowW,
+                height: Defaults.ImageSize.rowH
+            ))]) { image in
+                image.resizable().scaledToFit()
+            } placeholder: {
+                Placeholder(style: .activity(ratio: Defaults.ImageSize.rowAspect))
+            }
+            .transition(.fade(duration: 0.25))
+            .drawingGroup()
+            .overlay {
+                VStack {
+                    HStack {
+                        Spacer()
                             CategoryLabel(
                                 text: gallery.category.value, color: gallery.color,
                                 insets: .init(top: 3, leading: 6, bottom: 3, trailing: 6),
@@ -45,8 +49,8 @@ struct GalleryThumbnailCell: View {
                             )
                         }
                         Spacer()
-                    }
                 }
+            }
             VStack(alignment: .leading, spacing: 5) {
                 Text(gallery.title).font(.callout.bold()).lineLimit(3)
                 let tagContents = gallery.tagContents(maximum: setting.listTagsNumberMaximum)

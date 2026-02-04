@@ -26,8 +26,8 @@ internal enum L10n {
           internal static let filePicker = L10n.tr("Constant", "app.acknowledgement.link.filePicker", fallback: "https://github.com/markrenaud/FilePicker")
           /// https://github.com/tid-kijyun/Kanna
           internal static let kanna = L10n.tr("Constant", "app.acknowledgement.link.kanna", fallback: "https://github.com/tid-kijyun/Kanna")
-          /// https://github.com/onevcat/Kingfisher
-          internal static let kingfisher = L10n.tr("Constant", "app.acknowledgement.link.kingfisher", fallback: "https://github.com/onevcat/Kingfisher")
+          /// https://github.com/SDWebImage/SDWebImage
+          internal static let kingfisher = L10n.tr("Constant", "app.acknowledgement.link.kingfisher", fallback: "https://github.com/SDWebImage/SDWebImage")
           /// https://github.com/SFSafeSymbols/SFSafeSymbols
           internal static let sfSafeSymbols = L10n.tr("Constant", "app.acknowledgement.link.sfSafeSymbols", fallback: "https://github.com/SFSafeSymbols/SFSafeSymbols")
           /// https://github.com/gonzalezreal/SwiftCommonMark
@@ -62,8 +62,8 @@ internal enum L10n {
           internal static let filePicker = L10n.tr("Constant", "app.acknowledgement.text.filePicker", fallback: "FilePicker")
           /// Kanna
           internal static let kanna = L10n.tr("Constant", "app.acknowledgement.text.kanna", fallback: "Kanna")
-          /// Kingfisher
-          internal static let kingfisher = L10n.tr("Constant", "app.acknowledgement.text.kingfisher", fallback: "Kingfisher")
+          /// SDWebImage
+          internal static let kingfisher = L10n.tr("Constant", "app.acknowledgement.text.kingfisher", fallback: "SDWebImage")
           /// SFSafeSymbols
           internal static let sfSafeSymbols = L10n.tr("Constant", "app.acknowledgement.text.sfSafeSymbols", fallback: "SFSafeSymbols")
           /// SwiftCommonMark

@@ -4,7 +4,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import SDWebImageSwiftUI
 import SwiftUIPager
 import SFSafeSymbols
 import ComposableArchitecture
@@ -41,8 +41,8 @@ struct HomeView: View {
                                 currentID: store.currentCardID,
                                 colors: store.cardColors,
                                 navigateAction: navigateTo(gid:),
-                                webImageSuccessAction: { gid, result in
-                                    store.send(.analyzeImageColors(gid, result))
+                                webImageSuccessAction: { gid, image in
+                                    store.send(.analyzeImageColors(gid, image))
                                 }
                             )
                             .equatable().allowsHitTesting(store.allowsCardHitTesting)
@@ -199,12 +199,12 @@ private struct CardSlideSection: View, Equatable {
     private let currentID: String
     private let colors: [Color]
     private let navigateAction: (String) -> Void
-    private let webImageSuccessAction: (String, RetrieveImageResult) -> Void
+    private let webImageSuccessAction: (String, UIImage) -> Void
 
     init(
         galleries: [Gallery], pageIndex: Binding<Int>, currentID: String,
         colors: [Color], navigateAction: @escaping (String) -> Void,
-        webImageSuccessAction: @escaping (String, RetrieveImageResult) -> Void
+        webImageSuccessAction: @escaping (String, UIImage) -> Void
     ) {
         self.galleries = galleries
         _pageIndex = pageIndex
@@ -307,8 +307,17 @@ private struct VerticalCoverStack: View {
         Button {
             navigateAction(gallery.id)
         } label: {
-            KFImage(gallery.coverURL).placeholder(placeholder).defaultModifier().scaledToFill()
-                .frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH).cornerRadius(2)
+            WebImage(url: gallery.coverURL, context: [.imageThumbnailPixelSize: NSValue(cgSize: CGSize(
+                width: Defaults.ImageSize.rowW,
+                height: Defaults.ImageSize.rowH
+            ))]) { image in
+                image.defaultModifier().scaledToFill()
+            } placeholder: {
+                placeholder()
+            }
+            .transition(.fade(duration: 0.25))
+            .frame(width: Defaults.ImageSize.rowW, height: Defaults.ImageSize.rowH)
+            .cornerRadius(2)
         }
     }
 

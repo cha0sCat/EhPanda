@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import SDWebImage
 import TTProgressHUD
 import ComposableArchitecture
 
@@ -300,7 +301,7 @@ struct ReadingReducer {
                             await send(.saveImageDone(success))
                         }
                     case .share(let isAnimated):
-                        if isAnimated, let data = image.kf.data(format: .GIF) {
+                        if isAnimated, let data = image.sd_imageData() {
                             return .send(.setNavigation(.share(.init(value: .data(data)))))
                         } else {
                             return .send(.setNavigation(.share(.init(value: .image(image)))))
