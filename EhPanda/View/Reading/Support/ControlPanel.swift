@@ -146,7 +146,7 @@ private struct UpperPanel: View {
                     Image(systemSymbol: .viewfinderCircle)
                         .symbolVariant(enablesLiveText ? .fill : .none)
                         .font(.title2)
-                        .frame(width: 44, height: 44)
+                        .frame(width: 32, height: 32)
                         .contentShape(Rectangle())
                 }
 
@@ -173,7 +173,7 @@ private struct UpperPanel: View {
                         Image(systemSymbol: .rectangleSplit2x1)
                             .symbolVariant(setting.enablesDualPageMode ? .fill : .none)
                             .font(.title2)
-                            .frame(width: 44, height: 44)
+                            .frame(width: 32, height: 32)
                             .contentShape(Rectangle())
                     }
                 }
@@ -193,7 +193,7 @@ private struct UpperPanel: View {
                 } label: {
                     Image(systemSymbol: .timer)
                         .font(.title2)
-                        .frame(width: 44, height: 44)
+                        .frame(width: 32, height: 32)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.borderless)
@@ -214,7 +214,7 @@ private struct UpperPanel: View {
                 }
                 .buttonStyle(.borderless)
                 .font(.title2)
-                .frame(width: 44, height: 44)
+                .frame(width: 32, height: 32)
                 .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
