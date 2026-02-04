@@ -529,7 +529,7 @@ private struct ImageContainer: View {
         .frame(width: width, height: height)
     }
     @ViewBuilder private func image(url: URL?) -> some View {
-        if url?.isGIF != true {
+        if url?.isAnimatedImage != true {
             KFImage(url)
                 .placeholder(placeholder)
                 .defaultModifier(withRoundedCorners: false)
