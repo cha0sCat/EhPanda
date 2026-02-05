@@ -209,6 +209,25 @@ extension UIImage {
         return cropping(to: rect)
     }
 
+    func croppingCopy(to rect: CGRect) -> UIImage? {
+        guard let croppedImage = cropping(to: rect) else { return nil }
+
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = croppedImage.scale
+        format.opaque = false
+
+        let renderer = UIGraphicsImageRenderer(size: croppedImage.size, format: format)
+        return renderer.image { _ in
+            croppedImage.draw(in: CGRect(origin: .zero, size: croppedImage.size))
+        }
+    }
+
+    func croppingCopy(size: CGSize, offset: CGSize) -> UIImage? {
+        let origin = CGPoint(x: offset.width, y: offset.height)
+        let rect = CGRect(origin: origin, size: size)
+        return croppingCopy(to: rect)
+    }
+
     func withRoundedCorners(radius: CGFloat) -> UIImage? {
         let maxRadius = min(size.width, size.height) / 2
 

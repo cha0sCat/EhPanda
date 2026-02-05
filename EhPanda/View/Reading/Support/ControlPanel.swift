@@ -336,7 +336,7 @@ private struct SliderPreivew: View {
             ForEach(previewsIndices, id: \.self) { index in
                 let (url, modifier) = PreviewResolver.getPreviewConfigs(originalURL: previewURLs[index])
                 VStack {
-                    KFImage.url(url, cacheKey: previewURLs[index]?.absoluteString)
+                    KFImage.url(url, cacheKey: url?.absoluteString)
                         .placeholder({ Placeholder(style: .activity(ratio: Defaults.ImageSize.previewAspect)) })
                         .fade(duration: 0.25)
                         .imageModifier(modifier)
