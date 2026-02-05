@@ -104,7 +104,7 @@ struct OffsetModifier: ImageModifier {
         guard let size = size, let offset = offset
         else { return image }
 
-        return image.croppingCopy(size: size, offset: offset) ?? image
+        return image.cropping(size: size, offset: offset) ?? image
     }
 }
 
@@ -119,7 +119,7 @@ struct RoundedOffsetModifier: ImageModifier {
 
     func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         guard let size = size, let offset = offset,
-              let croppedImg = image.croppingCopy(size: size, offset: offset),
+              let croppedImg = image.cropping(size: size, offset: offset),
               let roundedCroppedImg = croppedImg.withRoundedCorners(radius: 5)
         else { return image.withRoundedCorners(radius: 5) ?? image }
 
