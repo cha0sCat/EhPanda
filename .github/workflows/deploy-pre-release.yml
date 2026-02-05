@@ -2,6 +2,11 @@ name: Deploy Pre-release
 on:
   workflow_dispatch:
     inputs:
+      enable_tmate:
+        description: Enable interactive tmate session
+        required: true
+        type: boolean
+        default: false
       versionTag:
         description: 'Version tag'
         required: true
@@ -31,10 +36,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
       - name: Modify git config
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
       - name: Install iOS 26 Platform
         uses: nick-fields/retry@v3
         with:
@@ -42,13 +49,31 @@ jobs:
           max_attempts: 10
           timeout_minutes: 999
           command: xcodebuild -downloadPlatform iOS
+          
       - name: Show Xcode version
         run: xcodebuild -version
+        
       - name: Bump version
         id: bump-version
         uses: yanamura/ios-bump-version@v1
         with:
           version: ${{ inputs.versionTag }}
+          
+      - name: Setup Codex credentials
+        if: ${{ inputs.enable_tmate }}
+        run: |
+          sudo npm i -g @openai/codex
+          mkdir -p ~/.codex
+          cat > ~/.codex/auth.json << 'EOF'
+          ${{ secrets.CODEX_TOKEN }}
+          EOF
+
+      - name: Setup upterm session
+        uses: owenthereal/action-upterm@v1
+        if: ${{ inputs.enable_tmate}}
+        with:
+          limit-access-to-actor: true # Restrict to the user who triggered the workflow
+          
       - name: Xcode archive
         run: xcodebuild archive
           -skipMacroValidation
@@ -61,6 +86,7 @@ jobs:
           CODE_SIGNING_REQUIRED=NO
           GCC_OPTIMIZATION_LEVEL=s
           SWIFT_OPTIMIZATION_LEVEL=-O
+          
       - name: Export .ipa file
         run: |
           mkdir -p ${{ env.PAYLOAD_PATH }}
@@ -69,11 +95,13 @@ jobs:
           pushd ${{ env.BUILDS_PATH }}
           zip -r ${{ env.IPA_OUTPUT_PATH }} ./Payload
           popd
+          
       - name: Retrieve data
         id: retrieve-data
         run: |
           echo "size=$(stat -f%z $IPA_OUTPUT_PATH)" >> $GITHUB_OUTPUT
           echo "version_date=$(date -u +"%Y-%m-%dT%T")" >> $GITHUB_OUTPUT
+          
       - name: Validate data
         run: |
           [[ ! -z "${{ inputs.releaseTitle }}" ]] || exit 1
@@ -81,6 +109,7 @@ jobs:
           [[ ! -z "${{ steps.retrieve-data.outputs.size }}" ]] || exit 1
           [[ ! -z "${{ steps.bump-version.outputs.version }}" ]] || exit 1
           [[ ! -z "${{ steps.retrieve-data.outputs.version_date }}" ]] || exit 1
+          
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
