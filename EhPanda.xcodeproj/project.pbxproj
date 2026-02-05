@@ -213,6 +213,8 @@
 		ABC3C7892593699B00E0C11B /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC3C76D2593699A00E0C11B /* Defaults.swift */; };
 		ABC3C78F2593699B00E0C11B /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC3C7762593699A00E0C11B /* ViewModifiers.swift */; };
 		ABC4A0792751B40E00968A4F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ABC4A0782751B40E00968A4F /* Kingfisher */; };
+		B840F2DAF5C34A949D2E8CFC /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 05894FD58B814EDE8A13B1E8 /* SDWebImageSwiftUI */; };
+		BB4D31E52B2F493F8C74980F /* SDWebImageWebPCoder in Frameworks */ = {isa = PBXBuildFile; productRef = AA7C6A4EBA9A486286A55328 /* SDWebImageWebPCoder */; };
 		ABC681F326898D46007BBD69 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = ABC681F126898D46007BBD69 /* Model.xcdatamodeld */; };
 		ABC732C527B9024500D47DA9 /* LiveText.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC732C427B9024500D47DA9 /* LiveText.swift */; };
 		ABC732C727B90F0900D47DA9 /* LiveTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC732C627B90F0900D47DA9 /* LiveTextView.swift */; };
@@ -629,6 +631,8 @@
 				ABD7005926B1C31500DC59C9 /* Kanna in Frameworks */,
 				AB60D0E9274C7ECE00F899AB /* WaterfallGrid in Frameworks */,
 				ABC4A0792751B40E00968A4F /* Kingfisher in Frameworks */,
+				B840F2DAF5C34A949D2E8CFC /* SDWebImageSwiftUI in Frameworks */,
+				BB4D31E52B2F493F8C74980F /* SDWebImageWebPCoder in Frameworks */,
 				EAE63E2129E2A6330048C601 /* SwiftyBeaver in Frameworks */,
 				AB26F59927ACDB4200AB3468 /* FilePicker in Frameworks */,
 				AB6505A026B0027800F91E9D /* SwiftUIPager in Frameworks */,
@@ -1579,6 +1583,8 @@
 				ABAC82FD26BC4A96009F5026 /* OpenCC */,
 				AB60D0E8274C7ECE00F899AB /* WaterfallGrid */,
 				ABC4A0782751B40E00968A4F /* Kingfisher */,
+				05894FD58B814EDE8A13B1E8 /* SDWebImageSwiftUI */,
+				AA7C6A4EBA9A486286A55328 /* SDWebImageWebPCoder */,
 				AB17573C27675B1E00FD64E2 /* Colorful */,
 				AB17573F27678B3400FD64E2 /* UIImageColors */,
 				ABD49D5C277C6C9D003D1A07 /* SFSafeSymbols */,
@@ -1657,6 +1663,8 @@
 				ABAC82FC26BC4866009F5026 /* XCRemoteSwiftPackageReference "SwiftyOpenCC" */,
 				AB60D0E7274C7ECE00F899AB /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
 				ABC4A0772751B40E00968A4F /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				B1332544417E469481DC86C7 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				854DE60A5D3C4A4E8A885873 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */,
 				AB17573B27675B1E00FD64E2 /* XCRemoteSwiftPackageReference "Colorful" */,
 				AB17573E27678B3400FD64E2 /* XCRemoteSwiftPackageReference "UIImageColors" */,
 				ABD49D5B277C6C9D003D1A07 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
@@ -2518,6 +2526,22 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		854DE60A5D3C4A4E8A885873 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageWebPCoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.0;
+			};
+		};
+		B1332544417E469481DC86C7 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.4;
+			};
+		};
 		ABD49D5B277C6C9D003D1A07 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
@@ -2609,6 +2633,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ABC4A0772751B40E00968A4F /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		05894FD58B814EDE8A13B1E8 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1332544417E469481DC86C7 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+		AA7C6A4EBA9A486286A55328 /* SDWebImageWebPCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 854DE60A5D3C4A4E8A885873 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */;
+			productName = SDWebImageWebPCoder;
 		};
 		ABD49D5C277C6C9D003D1A07 /* SFSafeSymbols */ = {
 			isa = XCSwiftPackageProductDependency;

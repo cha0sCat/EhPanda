@@ -7,6 +7,8 @@ import SwiftUI
 import Combine
 import Foundation
 import Kingfisher
+import SDWebImage
+import SDWebImageWebPCoder
 import SwiftyBeaver
 import UIImageColors
 import ComposableArchitecture
@@ -54,6 +56,8 @@ extension LibraryClient {
             let config = KingfisherManager.shared.downloader.sessionConfiguration
             config.httpCookieStorage = HTTPCookieStorage.shared
             KingfisherManager.shared.downloader.sessionConfiguration = config
+
+            SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
         },
         clearWebImageDiskCache: {
             KingfisherManager.shared.cache.clearDiskCache()
