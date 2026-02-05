@@ -145,6 +145,7 @@ private struct UpperPanel: View {
                     Image(systemSymbol: .viewfinderCircle)
                         .symbolVariant(enablesLiveText ? .fill : .none)
                         .font(.title2)
+                        .frame(width: 44, height: 44)
                 }
 
                 if DeviceUtil.isLandscape && setting.readingDirection != .vertical {
@@ -170,6 +171,7 @@ private struct UpperPanel: View {
                         Image(systemSymbol: .rectangleSplit2x1)
                             .symbolVariant(setting.enablesDualPageMode ? .fill : .none)
                             .font(.title2)
+                            .frame(width: 44, height: 44)
                     }
                 }
 
@@ -188,6 +190,7 @@ private struct UpperPanel: View {
                 } label: {
                     Image(systemSymbol: .timer)
                         .font(.title2)
+                        .frame(width: 44, height: 44)
                 }
                 .buttonStyle(.borderless)
 
@@ -207,10 +210,15 @@ private struct UpperPanel: View {
                 }
                 .buttonStyle(.borderless)
                 .font(.title2)
+                .frame(width: 44, height: 44)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 20)
-            .glassEffect(.regular.interactive())
+            .background {
+                Color.clear
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 20))
+                    .allowsHitTesting(false)
+            }
         }
         .foregroundStyle(.primary)
         .padding(.horizontal, 20)
