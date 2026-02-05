@@ -5,6 +5,8 @@
 
 import SwiftUI
 import Kingfisher
+import SDWebImage
+import SDWebImageSwiftUI
 import SwiftUIPager
 import ComposableArchitecture
 
@@ -257,20 +259,46 @@ extension ReadingView {
             Logger.info("analyzeImageForLiveText duplicated", context: ["index": index])
             return
         }
-        guard let key = store.imageURLs[index]?.absoluteString else {
+        guard let url = store.imageURLs[index] else {
             Logger.info("analyzeImageForLiveText URL not found", context: ["index": index])
             return
         }
-        KingfisherManager.shared.cache.retrieveImage(forKey: key) { result in
-            switch result {
-            case .success(let result):
-                if let image = result.image, let cgImage = image.cgImage {
-                    liveTextHandler.analyzeImage(
-                        cgImage, size: image.size, index: index, recognitionLanguages:
-                            store.galleryDetail?.language.codes
-                    )
+
+        func analyze(_ image: UIImage) {
+            if let cgImage = image.cgImage {
+                liveTextHandler.analyzeImage(
+                    cgImage,
+                    size: image.size,
+                    index: index,
+                    recognitionLanguages: store.galleryDetail?.language.codes
+                )
+            } else {
+                Logger.info("analyzeImageForLiveText image not found", context: ["index": index])
+            }
+        }
+
+        func fallbackToSDWebImageCache() {
+            let sdCacheKey = SDWebImageManager.shared.cacheKey(for: url)
+            SDImageCache.shared.queryImage(
+                forKey: sdCacheKey,
+                options: [],
+                context: nil
+            ) { image, _, _ in
+                if let image {
+                    analyze(image)
                 } else {
                     Logger.info("analyzeImageForLiveText image not found", context: ["index": index])
+                }
+            }
+        }
+
+        KingfisherManager.shared.cache.retrieveImage(forKey: url.absoluteString) { result in
+            switch result {
+            case .success(let result):
+                if let image = result.image {
+                    analyze(image)
+                } else {
+                    fallbackToSDWebImageCache()
                 }
             case .failure(let error):
                 Logger.info(
@@ -281,6 +309,7 @@ extension ReadingView {
                     ]
                     as [String: Any]
                 )
+                fallbackToSDWebImageCache()
             }
         }
     }
@@ -529,15 +558,34 @@ private struct ImageContainer: View {
         .frame(width: width, height: height)
     }
     @ViewBuilder private func image(url: URL?) -> some View {
-        if url?.isGIF != true {
+        if url?.isGIF == true {
+            KFAnimatedImage(url)
+                .placeholder(placeholder)
+                .fade(duration: 0.25)
+                .onSuccess(onSuccess)
+                .onFailure(onFailure)
+        } else if url?.isWebP == true {
+            AnimatedImage(url: url) {
+                placeholder(.init(totalUnitCount: 1))
+            }
+            .onSuccess { _, _, _ in
+                loadSucceededAction(index)
+            }
+            .onFailure { _ in
+                if imageURL != nil {
+                    loadFailedAction(index)
+                }
+            }
+            .indicator(.activity)
+            .transition(.fade(duration: 0.25))
+            .resizable()
+            .scaledToFit()
+        } else {
             KFImage(url)
                 .placeholder(placeholder)
                 .defaultModifier(withRoundedCorners: false)
-                .onSuccess(onSuccess).onFailure(onFailure)
-        } else {
-            KFAnimatedImage(url)
-                .placeholder(placeholder).fade(duration: 0.25)
-                .onSuccess(onSuccess).onFailure(onFailure)
+                .onSuccess(onSuccess)
+                .onFailure(onFailure)
         }
     }
 

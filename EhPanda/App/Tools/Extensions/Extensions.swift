@@ -65,6 +65,10 @@ extension URL {
         pathExtension == "gif"
     }
 
+    var isWebP: Bool {
+        pathExtension.lowercased() == "webp"
+    }
+
     func appending(queryItems: [URLQueryItem]) -> URL {
         guard !queryItems.isEmpty else { return self }
         var components: URLComponents = .init(
